@@ -291,11 +291,11 @@ class ActionsFragment : DaggerFragment() {
                 statusLightHandler.updateStatusLights(
                     cannulaAge, cannulaUsage, insulinAge,
                     reservoirLevel, sensorAge, sensorLevel,
-                    pbAge, pbLevel
+                    pbAge, pbLevel, cycleDayLayout, cycleDayDisplay
                 )
                 sensorLevelLabel.text = if (activeBgSource.sensorBatteryLevel == -1) "" else rh.gs(R.string.level_label)
             } else {
-                statusLightHandler.updateStatusLights(cannulaAge, cannulaUsage, insulinAge, null, sensorAge, null, pbAge, null)
+                statusLightHandler.updateStatusLights(cannulaAge, cannulaUsage, insulinAge, null, sensorAge, null, pbAge, null, cycleDayLayout, cycleDayDisplay)
                 sensorLevelLabel.text = ""
                 insulinLevelLabel.text = ""
                 pbLevelLabel.text = ""

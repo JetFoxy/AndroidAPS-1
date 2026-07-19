@@ -122,4 +122,29 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/cycle_day_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/period_calendar"
+            app:srcCompat="@drawable/ic_period_circle" />
+
+        <TextView
+            android:id="@+id/cycle_day_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:text="--"
+            android:paddingStart="2dp"
+            android:paddingEnd="0dp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
 </com.google.android.flexbox.FlexboxLayout>

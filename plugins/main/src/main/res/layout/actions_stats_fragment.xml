@@ -286,4 +286,34 @@
 
     </TableRow>
 
+    <TableRow
+        android:id="@+id/cycle_day_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/cycle_day_label"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:gravity="center_vertical"
+            android:paddingStart="15dp"
+            android:paddingEnd="2dp"
+            android:text="@string/period_calendar"
+            android:textSize="14sp"
+            app:drawableStartCompat="@drawable/ic_period_circle" />
+
+        <TextView
+            android:id="@+id/cycle_day_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:textSize="14sp"
+            android:text="--"
+            tools:ignore="HardcodedText" />
+
+    </TableRow>
+
 </TableLayout>

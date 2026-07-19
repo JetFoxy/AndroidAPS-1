@@ -120,4 +120,12 @@
     <string name="autotune_run_cancelled">Ein weiterer Lauf von Autotune wurde erkannt, Lauf abgebrochen</string>
     <!--    Steps count-->
     <!--    SMB mode-->
+
+    <!-- Cycle triggers -->
+    <string name="cycle_day_trigger">Zyklustag</string>
+    <string name="cycle_day_trigger_desc">Zyklustag = %1$d</string>
+    <string name="cycle_phase_trigger">Zyklusphase</string>
+    <string name="cycle_phase_trigger_desc">Phase = %1$s</string>
+    <string name="day_label">Tag</string>
+    <string name="phase_label">Phase</string>
 </resources>

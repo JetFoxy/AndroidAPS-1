@@ -1,11 +1,14 @@
 package app.aaps.plugins.main.general.overview.ui
 
 import android.annotation.SuppressLint
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import app.aaps.core.data.model.TE
 import app.aaps.core.data.pump.defs.PumpType
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.db.PersistenceLayer
+import app.aaps.core.interfaces.periodcalendar.PeriodCalendar
 import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.pump.WarnColors
 import app.aaps.core.interfaces.resources.ResourceHelper
@@ -49,8 +52,15 @@ class StatusLightHandler @Inject constructor(
         sensorAge: TextView?,
         sensorBatteryLevel: TextView?,
         batteryAge: TextView?,
-        batteryLevel: TextView?
+        batteryLevel: TextView?,
+        cycleDayLayout: LinearLayout?,
+        cycleDayDisplay: TextView?
     ) {
+        val periodCalendarPlugin = activePlugin.getSpecificPluginsListByInterface(PeriodCalendar::class.java).firstOrNull()
+        val isPeriodCalendarEnabled = periodCalendarPlugin?.isEnabled() == true
+        cycleDayLayout?.visibility = if (isPeriodCalendarEnabled) View.VISIBLE else View.GONE
+        cycleDayDisplay?.text = if (isPeriodCalendarEnabled) (periodCalendarPlugin as PeriodCalendar).getCycleDayText() else "--"
+
         val pump = activePlugin.activePump
         val bgSource = activePlugin.activeBgSource
         handleAge(cannulaAge, TE.Type.CANNULA_CHANGE, IntKey.OverviewCageWarning, IntKey.OverviewCageCritical)

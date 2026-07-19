@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="6dp">
+
+    <View
+        android:id="@+id/phase_color_indicator"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        tools:background="#E57373" />
+
+    <TextView
+        android:id="@+id/phase_day_range"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="?attr/textAppearanceBody2"
+        tools:text="1-5" />
+
+    <TextView
+        android:id="@+id/phase_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textStyle="bold"
+        tools:text="ME" />
+
+    <ImageButton
+        android:id="@+id/btn_edit_phase"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/edit_phase"
+        android:src="@android:drawable/ic_menu_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:padding="4dp" />
+
+    <ImageButton
+        android:id="@+id/btn_delete_phase"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/delete_phase"
+        android:src="@android:drawable/ic_menu_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:padding="4dp" />
+
+</LinearLayout>

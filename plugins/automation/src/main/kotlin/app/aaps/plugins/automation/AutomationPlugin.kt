@@ -76,6 +76,8 @@ import app.aaps.plugins.automation.triggers.TriggerPumpLastConnection
 import app.aaps.plugins.automation.triggers.TriggerRecurringTime
 import app.aaps.plugins.automation.triggers.TriggerReservoirLevel
 import app.aaps.plugins.automation.triggers.TriggerSensorAge
+import app.aaps.plugins.automation.triggers.TriggerCycleDay
+import app.aaps.plugins.automation.triggers.TriggerCyclePhase
 import app.aaps.plugins.automation.triggers.TriggerStepsCount
 import app.aaps.plugins.automation.triggers.TriggerTempTarget
 import app.aaps.plugins.automation.triggers.TriggerTempTargetValue
@@ -432,7 +434,9 @@ class AutomationPlugin @Inject constructor(
             TriggerSensorAge(injector),
             TriggerCannulaAge(injector),
             TriggerReservoirLevel(injector),
-            TriggerStepsCount(injector)
+            TriggerStepsCount(injector),
+            TriggerCycleDay(injector),
+            TriggerCyclePhase(injector)
         )
 
         val pump = activePlugin.activePump

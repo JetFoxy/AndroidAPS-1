@@ -146,4 +146,12 @@
     <string name="newSmbMode">Новый режим SMB:</string>
     <string name="on">ВКЛ</string>
     <string name="off">ВЫКЛ</string>
+
+    <!-- Cycle triggers -->
+    <string name="cycle_day_trigger">День цикла</string>
+    <string name="cycle_day_trigger_desc">День %1$d</string>
+    <string name="cycle_phase_trigger">Фаза цикла</string>
+    <string name="cycle_phase_trigger_desc">Фаза: %1$s</string>
+    <string name="day_label">День цикла:</string>
+    <string name="phase_label">Фаза:</string>
 </resources>

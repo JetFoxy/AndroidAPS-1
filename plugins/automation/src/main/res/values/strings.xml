@@ -153,4 +153,12 @@
     <string name="on">ON</string>
     <string name="off">OFF</string>
 
+
+    <!-- Cycle triggers -->
+    <string name="cycle_day_trigger">Cycle Day</string>
+    <string name="cycle_day_trigger_desc">Cycle day = %1$d</string>
+    <string name="cycle_phase_trigger">Cycle Phase</string>
+    <string name="cycle_phase_trigger_desc">Phase = %1$s</string>
+    <string name="day_label">Day</string>
+    <string name="phase_label">Phase</string>
 </resources>

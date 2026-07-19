@@ -977,7 +977,9 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             binding.statusLightsLayout.sensorAge,
             null,
             binding.statusLightsLayout.pbAge,
-            binding.statusLightsLayout.pbLevel
+            binding.statusLightsLayout.pbLevel,
+            binding.statusLightsLayout.cycleDayLayout,
+            binding.statusLightsLayout.cycleDayDisplay
         )
     }
 
