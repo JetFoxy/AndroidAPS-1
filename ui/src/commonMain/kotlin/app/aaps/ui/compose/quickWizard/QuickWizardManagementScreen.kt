@@ -439,6 +439,11 @@ fun QuickWizardManagementScreen(
                                         time = uiState.editorTime,
                                         duration = uiState.editorDuration,
                                         carbs2 = uiState.editorCarbs2,
+                                        ttEnable = uiState.editorTtEnable,
+                                        ttReason = uiState.editorTtReason,
+                                        ttTarget = uiState.editorTtTarget,
+                                        ttDuration = uiState.editorTtDuration,
+                                        glucoseUnit = uiState.glucoseUnit,
                                         showSuperBolusOption = uiState.showSuperBolusOption,
                                         showWearOptions = uiState.showWearOptions,
                                         maxCarbs = viewModel.getMaxCarbs(),
@@ -466,6 +471,10 @@ fun QuickWizardManagementScreen(
                                         onTimeChange = viewModel::updateTime,
                                         onDurationChange = viewModel::updateDuration,
                                         onCarbs2Change = viewModel::updateCarbs2,
+                                        onTtEnableChange = viewModel::updateTtEnable,
+                                        onTtReasonChange = viewModel::updateTtReason,
+                                        onTtTargetChange = viewModel::updateTtTarget,
+                                        onTtDurationChange = viewModel::updateTtDuration,
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                 }

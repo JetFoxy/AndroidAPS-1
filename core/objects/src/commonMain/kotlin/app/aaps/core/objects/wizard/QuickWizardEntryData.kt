@@ -47,7 +47,11 @@ data class QuickWizardEntryData(
     val duration: Int = 0,
     val carbTime: Int = 0,
     val useAlarm: Int = NEVER,
-    val lastUsed: Long = 0
+    val lastUsed: Long = 0,
+    val ttEnable: Int = NEVER,
+    val ttReason: String = "CUSTOM",
+    val ttTarget: Double = 100.0,
+    val ttDuration: Long = 3600000L
 ) {
 
     companion object {
@@ -95,7 +99,11 @@ data class QuickWizardEntryData(
                 duration = json.lenientInt("duration"),
                 carbTime = json.lenientInt("carbTime"),
                 useAlarm = json.lenientInt("useAlarm", NEVER),
-                lastUsed = json.lenientLong("lastUsed")
+                lastUsed = json.lenientLong("lastUsed"),
+                ttEnable = json.lenientInt("ttEnable", NEVER),
+                ttReason = json.lenientString("ttReason", "CUSTOM"),
+                ttTarget = json.lenientDouble("ttTarget", 100.0),
+                ttDuration = json.lenientLong("ttDuration", 3600000L)
             )
     }
 
@@ -131,5 +139,9 @@ data class QuickWizardEntryData(
             put("carbTime", carbTime)
             put("useAlarm", useAlarm)
             put("lastUsed", lastUsed)
+            put("ttEnable", ttEnable)
+            put("ttReason", ttReason)
+            put("ttTarget", ttTarget)
+            put("ttDuration", ttDuration)
         }
 }

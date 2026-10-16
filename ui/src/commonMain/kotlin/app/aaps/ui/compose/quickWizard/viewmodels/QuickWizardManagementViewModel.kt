@@ -3,10 +3,13 @@ package app.aaps.ui.compose.quickWizard.viewmodels
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.aaps.core.data.model.TT
 import app.aaps.core.interfaces.concurrent.aapsIoDispatcher
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
+import app.aaps.core.interfaces.profile.ProfileFunction
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.resources.TextResolver
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.collectResilient
@@ -55,6 +58,8 @@ class QuickWizardManagementViewModel(
     private val rxBus: RxBus,
     private val constraintChecker: ConstraintsChecker,
     private val preferences: Preferences,
+    private val profileFunction: ProfileFunction,
+    private val profileUtil: ProfileUtil,
     val rh: TextResolver,
     val dateUtil: DateUtil,
     private val aapsLogger: AAPSLogger
@@ -177,6 +182,11 @@ class QuickWizardManagementViewModel(
             editorTime = entry.time(),
             editorDuration = entry.duration(),
             editorCarbs2 = entry.carbs2(),
+            editorTtEnable = entry.ttEnable() == QuickWizardEntry.ALWAYS,
+            editorTtReason = TT.Reason.fromString(entry.ttReason()),
+            editorTtTarget = profileUtil.fromMgdlToUnits(entry.ttTarget(), profileFunction.getUnits()),
+            editorTtDuration = entry.ttDuration(),
+            glucoseUnit = profileFunction.getUnits(),
             hasUnsavedChanges = false
         )
     }
@@ -368,7 +378,12 @@ class QuickWizardManagementViewModel(
                     useEcarbs = booleanToRadioNumber(currentState.editorUseEcarbs),
                     time = currentState.editorTime,
                     duration = currentState.editorDuration,
-                    carbs2 = currentState.editorCarbs2
+                    carbs2 = currentState.editorCarbs2,
+                    // Temp target on execute (target stored as mg/dL, duration in ms)
+                    ttEnable = booleanToRadioNumber(currentState.editorTtEnable),
+                    ttReason = currentState.editorTtReason.text,
+                    ttTarget = profileUtil.convertToMgdl(currentState.editorTtTarget, currentState.glucoseUnit),
+                    ttDuration = currentState.editorTtDuration
                 )
 
                 quickWizard.addOrUpdate(entry)
@@ -570,6 +585,22 @@ class QuickWizardManagementViewModel(
 
     fun updateCarbs2(value: Int) {
         _uiState.update { it.copy(editorCarbs2 = value, hasUnsavedChanges = true) }
+    }
+
+    fun updateTtEnable(value: Boolean) {
+        _uiState.update { it.copy(editorTtEnable = value, hasUnsavedChanges = true) }
+    }
+
+    fun updateTtReason(value: TT.Reason) {
+        _uiState.update { it.copy(editorTtReason = value, hasUnsavedChanges = true) }
+    }
+
+    fun updateTtTarget(value: Double) {
+        _uiState.update { it.copy(editorTtTarget = value, hasUnsavedChanges = true) }
+    }
+
+    fun updateTtDuration(value: Long) {
+        _uiState.update { it.copy(editorTtDuration = value, hasUnsavedChanges = true) }
     }
 
     /**

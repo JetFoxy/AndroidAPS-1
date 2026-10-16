@@ -273,6 +273,8 @@
     <string name="trend_positive_only">Positive only</string>
     <string name="trend_negative_only">Negative only</string>
     <string name="use_temp_target">Use Temp Target</string>
+    <string name="start_temp_target">Start Temp Target</string>
+    <string name="start_temp_target_on_execute">Start Temp Target on Execute</string>
     <string name="use_alarm">Use Alarm</string>
     <string name="device_selection">Device Selection</string>
     <string name="show_on_phone">Show on Phone</string>

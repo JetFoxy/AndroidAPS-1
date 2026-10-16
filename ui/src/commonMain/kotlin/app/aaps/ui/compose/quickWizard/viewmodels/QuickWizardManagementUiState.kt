@@ -1,5 +1,7 @@
 package app.aaps.ui.compose.quickWizard.viewmodels
 
+import app.aaps.core.data.model.GlucoseUnit
+import app.aaps.core.data.model.TT
 import app.aaps.core.objects.wizard.QuickWizardEntry
 import app.aaps.core.objects.wizard.QuickWizardMode
 import app.aaps.core.ui.compose.ScreenMode
@@ -38,6 +40,13 @@ data class QuickWizardManagementUiState(
     val editorTime: Int = 0,                // eCarbs time in minutes
     val editorDuration: Int = 0,            // eCarbs duration in hours
     val editorCarbs2: Int = 0,              // eCarbs additional carbs
+
+    // Temp target on execute
+    val editorTtEnable: Boolean = false,
+    val editorTtReason: TT.Reason = TT.Reason.CUSTOM,
+    val editorTtTarget: Double = 100.0,     // target in user units (display format)
+    val editorTtDuration: Long = 3600000L,  // duration in milliseconds
+    val glucoseUnit: GlucoseUnit = GlucoseUnit.MGDL,
 
     // UI control
     val showNotesField: Boolean = false,

@@ -11,6 +11,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Watch
+import app.aaps.core.ui.compose.icons.IcBolus
+import app.aaps.core.ui.compose.icons.IcCarbs
+import app.aaps.core.ui.compose.icons.IcQuickwizard
+import app.aaps.core.data.model.GlucoseUnit
+import app.aaps.core.data.model.TT
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +31,10 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -67,6 +81,10 @@ import app.aaps.ui.compose.quickWizard.viewmodels.TrendOption
  * @param time eCarbs time offset in minutes
  * @param duration eCarbs duration in hours
  * @param carbs2 eCarbs additional carbs amount
+ * @param ttEnable Start temp target on execute
+ * @param ttReason Temp target reason
+ * @param ttTarget Temp target value in mg/dL
+ * @param ttDuration Temp target duration in milliseconds
  * @param showSuperBolusOption Whether superbolus feature is enabled
  * @param showWearOptions Whether wear control is enabled
  * @param maxCarbs Maximum allowed carbs
@@ -91,6 +109,10 @@ import app.aaps.ui.compose.quickWizard.viewmodels.TrendOption
  * @param onTimeChange Callback when time changes
  * @param onDurationChange Callback when duration changes
  * @param onCarbs2Change Callback when carbs2 changes
+ * @param onTtEnableChange Callback when ttEnable changes
+ * @param onTtReasonChange Callback when ttReason changes
+ * @param onTtTargetChange Callback when ttTarget changes
+ * @param onTtDurationChange Callback when ttDuration changes
  * @param modifier Modifier for the editor
  */
 @Composable
@@ -117,6 +139,11 @@ fun QuickWizardEditor(
     time: Int,
     duration: Int,
     carbs2: Int,
+    ttEnable: Boolean,
+    ttReason: TT.Reason,
+    ttTarget: Double,
+    ttDuration: Long,
+    glucoseUnit: GlucoseUnit,
     showSuperBolusOption: Boolean,
     showWearOptions: Boolean,
     maxCarbs: Double,
@@ -144,6 +171,10 @@ fun QuickWizardEditor(
     onTimeChange: (Int) -> Unit,
     onDurationChange: (Int) -> Unit,
     onCarbs2Change: (Int) -> Unit,
+    onTtEnableChange: (Boolean) -> Unit,
+    onTtReasonChange: (TT.Reason) -> Unit,
+    onTtTargetChange: (Double) -> Unit,
+    onTtDurationChange: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LocalDateUtil.current
@@ -355,6 +386,54 @@ fun QuickWizardEditor(
 
         } // end WIZARD-only section
 
+        // Start Temp Target on execute (all modes)
+        HorizontalDivider()
+        Text(
+            text = stringResource(UiStrings.start_temp_target_on_execute),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        SwitchRow(
+            label = stringResource(UiStrings.start_temp_target),
+            checked = ttEnable,
+            onCheckedChange = onTtEnableChange
+        )
+        if (ttEnable) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                TTReasonDropdown(
+                    selectedReason = ttReason,
+                    onReasonChange = onTtReasonChange,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (ttReason == TT.Reason.CUSTOM) {
+                    val isMmol = glucoseUnit == GlucoseUnit.MMOL
+                    NumberInputRow(
+                        labelRef = CoreUiStrings.temporary_target,
+                        value = ttTarget,
+                        onValueChange = onTtTargetChange,
+                        valueRange = if (isMmol) 3.3..11.1 else 60.0..200.0,
+                        step = if (isMmol) 0.1 else 1.0,
+                        unitLabel = if (isMmol) CoreUiStrings.units_mmol else CoreUiStrings.units_mgdl,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    NumberInputRow(
+                        labelRef = CoreUiStrings.duration,
+                        value = (ttDuration / 60000.0),
+                        onValueChange = { onTtDurationChange((it * 60000.0).toLong()) },
+                        valueRange = 5.0..1440.0,
+                        step = 5.0,
+                        unitLabel = CoreUiStrings.units_min,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
         // Device Selection (only if wear control enabled)
         if (showWearOptions) {
             HorizontalDivider()
@@ -489,5 +568,53 @@ private fun TrendRadioButton(
             modifier = Modifier.padding(start = 8.dp),
             style = MaterialTheme.typography.bodyMedium
         )
+    }
+}
+
+private val ttManualReasons = listOf(
+    TT.Reason.CUSTOM,
+    TT.Reason.EATING_SOON,
+    TT.Reason.ACTIVITY,
+    TT.Reason.HYPOGLYCEMIA
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TTReasonDropdown(
+    selectedReason: TT.Reason,
+    onReasonChange: (TT.Reason) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = selectedReason.text,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(CoreUiStrings.reason)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            ttManualReasons.forEach { reason ->
+                DropdownMenuItem(
+                    text = { Text(reason.text) },
+                    onClick = {
+                        onReasonChange(reason)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
     }
 }

@@ -213,6 +213,14 @@ class QuickWizardEntry(
 
     fun lastUsed(): Long = data.lastUsed
 
+    fun ttEnable(): Int = data.ttEnable
+
+    fun ttReason(): String = data.ttReason
+
+    fun ttTarget(): Double = data.ttTarget
+
+    fun ttDuration(): Long = data.ttDuration
+
     fun markAsUsed() {
         data = data.copy(lastUsed = dateUtil.now())
         // The write-back is explicit now. It used to work only because `storage` WAS the element

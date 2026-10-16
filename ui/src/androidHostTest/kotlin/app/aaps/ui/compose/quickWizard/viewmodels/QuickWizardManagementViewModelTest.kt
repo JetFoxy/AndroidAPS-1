@@ -1,7 +1,10 @@
 package app.aaps.ui.compose.quickWizard.viewmodels
 
+import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.profile.ProfileFunction
+import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.keys.interfaces.Preferences
@@ -41,6 +44,8 @@ internal class QuickWizardManagementViewModelTest {
     @Mock private lateinit var rxBus: RxBus
     @Mock private lateinit var constraintChecker: ConstraintsChecker
     @Mock private lateinit var preferences: Preferences
+    @Mock private lateinit var profileFunction: ProfileFunction
+    @Mock private lateinit var profileUtil: ProfileUtil
     private val rh = generatedTextResolver()
     @Mock private lateinit var dateUtil: DateUtil
     @Mock private lateinit var aapsLogger: AAPSLogger
@@ -56,8 +61,9 @@ internal class QuickWizardManagementViewModelTest {
         // Synchronous init wiring that must return non-null flows/streams to avoid construction NPEs.
         whenever(quickWizard.changes).thenReturn(MutableStateFlow(0))
         whenever(rxBus.toFlow(EventQuickWizardChange::class)).thenReturn(emptyFlow())
+        whenever(profileFunction.getUnits()).thenReturn(GlucoseUnit.MGDL)
         sut = QuickWizardManagementViewModel(
-            quickWizard, rxBus, constraintChecker, preferences, rh, dateUtil, aapsLogger
+            quickWizard, rxBus, constraintChecker, preferences, profileFunction, profileUtil, rh, dateUtil, aapsLogger
         )
     }
 

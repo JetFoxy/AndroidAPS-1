@@ -12,6 +12,7 @@ import app.aaps.core.data.model.TT
 import app.aaps.core.data.time.T
 import app.aaps.core.data.ue.Action
 import app.aaps.core.data.ue.Sources
+import app.aaps.core.data.ue.ValueWithUnit
 import app.aaps.core.interfaces.InterfacesStrings
 import app.aaps.core.interfaces.aps.Loop
 import app.aaps.core.interfaces.automation.Automation
@@ -50,6 +51,8 @@ import app.aaps.core.interfaces.scenes.SceneActions
 import app.aaps.core.interfaces.scenes.SceneChainResolver
 import app.aaps.core.interfaces.scenes.SceneStore
 import app.aaps.core.interfaces.sync.NsClient
+import app.aaps.core.interfaces.tempTargets.ttDurationMinutes
+import app.aaps.core.interfaces.tempTargets.ttTargetMgdl
 import app.aaps.core.interfaces.ui.UrlOpener
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.Round
@@ -503,6 +506,9 @@ class MainViewModel(
      * once (the advisor fork chooses correction-only). No dose is ever computed on a client.
      */
     private suspend fun executeWizardQuickWizard(entry: QuickWizardEntry, guid: String) {
+        if (entry.ttEnable() == QuickWizardEntry.ALWAYS) {
+            startTempTargetFromEntry(entry)
+        }
         val label = rh.gs(CoreUiStrings.clientcontrol_action_deliver_bolus)
         when (val prepared = wizardExecutor.prepare(WizardExecutor.WizardSource.QuickWizard(guid), label)) {
             is ActionProgress.Prepared ->
@@ -536,7 +542,12 @@ class MainViewModel(
                     EventShowDialog.OkCancel(
                         title = entry.buttonText(), message = "", confirmationLines = prepared.lines, icon = icon,
                         onOk = {
-                            appScope.launch { batchExecutor.commit(prepared.id, Sources.QuickWizard, label) }
+                            appScope.launch {
+                                if (entry.ttEnable() == QuickWizardEntry.ALWAYS) {
+                                    startTempTargetFromEntry(entry)
+                                }
+                                batchExecutor.commit(prepared.id, Sources.QuickWizard, label)
+                            }
                         }
                     )
                 )
@@ -576,6 +587,33 @@ class MainViewModel(
             )),
             rh.gs(InterfacesStrings.carbs),
             IcCarbs
+        )
+    }
+
+    private suspend fun startTempTargetFromEntry(entry: QuickWizardEntry) {
+        if (entry.ttEnable() != QuickWizardEntry.ALWAYS) return
+        val reason = TT.Reason.fromString(entry.ttReason())
+        val (targetMgdl, durationMs) = if (reason == TT.Reason.CUSTOM) {
+            entry.ttTarget() to entry.ttDuration()
+        } else {
+            preferences.ttTargetMgdl(reason) to (preferences.ttDurationMinutes(reason).toLong() * 60_000L)
+        }
+        val tempTarget = TT(
+            timestamp = dateUtil.now(),
+            duration = durationMs,
+            reason = reason,
+            lowTarget = targetMgdl,
+            highTarget = targetMgdl
+        )
+        persistenceLayer.insertAndCancelCurrentTemporaryTarget(
+            temporaryTarget = tempTarget,
+            action = Action.TT,
+            source = Sources.QuickWizard,
+            note = entry.buttonText(),
+            listValues = listOf(
+                ValueWithUnit.Mgdl(targetMgdl),
+                ValueWithUnit.Minute((durationMs / 60000L).toInt())
+            )
         )
     }
 
